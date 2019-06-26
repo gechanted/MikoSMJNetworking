@@ -1,0 +1,31 @@
+Mahbob: 
+
+Connection([constructor calls setParams]) - class
+
+	- setParams([Paste parameters here]): void
+	- runCommand(string): string
+
+
+Safi: 
+
+DeviceScanner(Connection) - class
+	- setOldData(DataObject): void
+	- getOldData(): DataObject
+	- updateData(DataObject): ScanObject
+		(retrieves new Data and (if possible compares them with the old data))
+
+ScanObject() - Value Object
+this contains a DataObject and a ChangesObject
+(Maybe the ChangesObject is just a DataObject)
+(you can fill this Object on the way you like)
+
+DataObject - Value Object
+contains information of the switch
+I can read out the information with a lot of getter
+get...?(): string or array or (even better) object
+Some information might differ and i have to read them. 
+if you make an array, pls document well what is where, otherwise make another object
+
+After the project is finished we will export your classes 
+as an available library for other people accessing switches via ssh
+
