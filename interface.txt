@@ -29,3 +29,4 @@ if you make an array, pls document well what is where, otherwise make another ob
 After the project is finished we will export your classes 
 as an available library for other people accessing switches via ssh
 
+there aren't any interfaces as such in python, so we are just producing the classes
