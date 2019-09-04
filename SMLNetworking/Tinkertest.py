@@ -1,12 +1,16 @@
 import tkinter
 from tkinter import *
 from tkinter.scrolledtext import ScrolledText
+from SMLNetworking.net import netHelper
+
 import os
 
 class FirstConnectWindow(tkinter.Frame):
     def __init__(self, master=None):
         super().__init__(master)
+        self.master = master
 
+        self.shallContinue = False
         self.ip = Entry(root)
         self.deviceType = Entry(root)
         self.username = Entry(root)
@@ -28,10 +32,19 @@ class FirstConnectWindow(tkinter.Frame):
         self.password.grid(row=2, column=3)
 
         self.connectButton.grid(row=3)
-        self.connectButton['command'] = self.connect()
+        self.connectButton['command'] = self.connect
 
     def connect(self):
-        pass
+        print(self.ip.get())
+        if(netHelper.connecting(ip=self.ip.get(), device_type=self.deviceType.get(), username=self.username.get(), password=self.password.get())):
+            self.shallContinue = True
+            self.master.destroy()
+
+        else:
+            pass
+            # add another label
+
+      #  netHelper.connecting(ip=self.ip.get(), device_type=self.deviceType.get(), username=self.username.get(), password=self.password.get())
 
 
 root = tkinter.Tk()
@@ -39,13 +52,18 @@ root.geometry("600x300")
 # print(os.getcwd())
 fcw = FirstConnectWindow(master=root)
 fcw.mainloop()
+#if(fcw.shallContinue == False):
+#    sys.exit()
+
+
+
 
 class Application(tkinter.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.frame = master
         self.createBottomCommandline()
-        self.frame.bind('<Return>', self.func(self=self))
+        self.frame.bind('<Return>', self.hittedEnter(self=self))
 
 
     def createBottomCommandline(self):
@@ -57,9 +75,9 @@ class Application(tkinter.Frame):
         self.commandLine = Entry(root)
         self.commandLine.grid(row=4, column=0, sticky=W+E+S, columnspan=4)
 
-    def func(event, self):
-        print("You hit return.")
-        self.history.insert(END, "hello")
+    def hittedEnter(event, self):
+        result = netHelper.custom_command(self.commandLine.get())
+        self.history.insert(END, result)
 
 
 
