@@ -88,15 +88,19 @@ class Application(tkinter.Frame):
         self.commandLine.grid(row=4, column=0, sticky=W+E+S, columnspan=4)
 
     def hittedEnter(self, event):
-        result = self.sshConnection.custom_command(self.commandLine.get())
+        result = self.custom_command(self.commandLine.get())
+        self.history.insert(END, self.commandLine.get())
         self.history.insert(END, result)
+        self.commandLine['text'] = ''
 
 
 
 
         # ------------mahbobs playground---------------------
 
-
+    def custom_command(self, customCommandString):
+        current_output = self.sshConnection.send_command(customCommandString)
+        return current_output
 
 root = tkinter.Tk()
 root.geometry("1200x600")
