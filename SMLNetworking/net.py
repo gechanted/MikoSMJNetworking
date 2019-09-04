@@ -1,14 +1,16 @@
 import netmiko as nm
 import sys
+
+
+
 class netHelper:
-
-
+    global SSHConnection
     # import tkinter as tk
     # from tkinter import ttk
     # from PIL import ImageTk, Image
     # relevant netmiko stuff
     #print("Establishing connection...")
-    global  SSHConnection
+
     #SSHConnection.find_prompt()
     #print("Connected!\r\n")
 
@@ -18,10 +20,7 @@ class netHelper:
 
     def connecting(ip, device_type, username, password):
         print("Connecting...")
-        try:
-          SSHConnection = nm.ConnectHandler(ip=ip, device_type=device_type, username=username, password=password)
-        except:
-          return False
+
 
         print(SSHConnection.session_log)
         print(SSHConnection.is_alive())
@@ -34,7 +33,7 @@ class netHelper:
 
 
     def show_ip_state(self):
-        current_output = SSHConnection.send_command('show ip int brief')
+        current_output = self.SSHConnection.send_command('show ip int brief')
         print(current_output)
 
 

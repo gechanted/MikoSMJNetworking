@@ -1,14 +1,16 @@
 import tkinter
 from tkinter import *
 from tkinter.scrolledtext import ScrolledText
-from SMLNetworking.net import netHelper
+import netmiko
 
-import os
+#import os
 
 class FirstConnectWindow(tkinter.Frame):
+
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
+        self.sshConnection = ""
 
         self.shallContinue = False
         self.ip = Entry(root)
@@ -20,6 +22,7 @@ class FirstConnectWindow(tkinter.Frame):
         self.usernameLabel = Label(root, text="Username")
         self.passwordLabel = Label(root, text="Password")
         self.connectButton = Button(root, text="Connect")
+        self.errorLabel = Label(root)
 
         self.ipLabel.grid(row=1)
         self.deviceTypeLabel.grid(row=1, column=1)
@@ -31,20 +34,28 @@ class FirstConnectWindow(tkinter.Frame):
         self.username.grid(row=2, column=2)
         self.password.grid(row=2, column=3)
 
+        self.ip.insert(0, "192.168.101.2")
+        self.deviceType.insert(0, "cisco_ios")
+        self.username.insert(0, "cisco")
+        self.password.insert(0, "cisco")
+
         self.connectButton.grid(row=3)
         self.connectButton['command'] = self.connect
+        self.errorLabel.grid(row=3, column=1)
 
     def connect(self):
         print(self.ip.get())
-        if(netHelper.connecting(ip=self.ip.get(), device_type=self.deviceType.get(), username=self.username.get(), password=self.password.get())):
-            self.shallContinue = True
-            self.master.destroy()
+        try:
+          self.sshConnection = netmiko.ConnectHandler(ip=self.ip.get(),
+                                                 device_type=self.deviceType.get(),
+                                                 username=self.username.get(),
+                                                 password=self.password.get())
+          self.shallContinue = True
+          self.master.destroy()
+        except:
+            self.errorLabel['text'] = 'connection refused'
 
-        else:
-            pass
-            # add another label
 
-      #  netHelper.connecting(ip=self.ip.get(), device_type=self.deviceType.get(), username=self.username.get(), password=self.password.get())
 
 
 root = tkinter.Tk()
@@ -59,11 +70,12 @@ fcw.mainloop()
 
 
 class Application(tkinter.Frame):
-    def __init__(self, master=None):
+    def __init__(self, master, sshConnection):
         super().__init__(master)
+        self.sshConnection = sshConnection
         self.frame = master
         self.createBottomCommandline()
-        self.frame.bind('<Return>', self.hittedEnter(self=self))
+        self.frame.bind('<Return>', self.hittedEnter)
 
 
     def createBottomCommandline(self):
@@ -75,15 +87,20 @@ class Application(tkinter.Frame):
         self.commandLine = Entry(root)
         self.commandLine.grid(row=4, column=0, sticky=W+E+S, columnspan=4)
 
-    def hittedEnter(event, self):
-        result = netHelper.custom_command(self.commandLine.get())
+    def hittedEnter(self, event):
+        result = self.sshConnection.custom_command(self.commandLine.get())
         self.history.insert(END, result)
+
+
+
+
+        # ------------mahbobs playground---------------------
 
 
 
 root = tkinter.Tk()
 root.geometry("1200x600")
 # print(os.getcwd())
-app = Application(master=root)
+app = Application(master=root, sshConnection=fcw.sshConnection)
 
 app.mainloop()
